@@ -1,8 +1,9 @@
 // app/api/webhook/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
-
-let latestTokens: any[] = []; // in-memory cache
+import { v4 as uuidv4 } from "uuid";
+import { db } from "../../../../utils/db";
+import { memeTokens } from "../../../../utils/schema";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -24,18 +25,17 @@ export async function POST(req: NextRequest) {
 
       if (liquidity < 100 && marketCap < 50000) {
         const tokenInfo = {
+          id: uuidv4(),
           name: pair.baseToken.name,
           symbol: pair.baseToken.symbol,
           address: mint,
           liquidity,
           marketCap,
-          launchedAgo: "Just now",
           birdeyeUrl: pair.url,
         };
 
-        // Add to in-memory cache
-        latestTokens.unshift(tokenInfo);
-        if (latestTokens.length > 50) latestTokens.pop();
+        // Insert into PlanetScale via Drizzle
+        await db.insert(memeTokens).values(tokenInfo);
 
         // Send Telegram alert
         await axios.post(
@@ -57,9 +57,4 @@ export async function POST(req: NextRequest) {
   }
 
   return NextResponse.json({ ok: true });
-}
-
-// Export for other APIs
-export function getCachedTokens() {
-  return latestTokens;
 }
