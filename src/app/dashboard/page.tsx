@@ -45,7 +45,7 @@ function Page() {
         </p>
       ) : tokens.length === 0 ? (
         <p className="text-gray-500 italic">
-          No tokens detected yet. Check back later.
+          No token(s) detected yet. Check back later.
         </p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
