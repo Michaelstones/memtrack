@@ -52,14 +52,12 @@ function Page() {
                 <h2 className="text-xl font-semibold">
                   {token.name} (${token.symbol})
                 </h2>
-                <p className="text-sm text-gray-600 mt-1">
-                  Liquidity: ${Number(token.liquidity).toLocaleString()}
-                </p>
+
                 <p className="text-sm text-gray-600">
                   Market Cap: ${Number(token.marketCap).toLocaleString()}
                 </p>
                 <p className="text-sm text-gray-500 italic">
-                  Launched: Just now
+                  Launched: Just now {token.launchedAgo}
                 </p>
                 <Link
                   href={token.birdeyeUrl || "#"}
