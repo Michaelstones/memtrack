@@ -75,8 +75,12 @@ export async function POST(req: NextRequest) {
           })`
         );
       }
-    } catch (error: any) {
-      await notifyFailure(mint, error.message ?? "Unknown error occurred");
+    } catch (error) {
+      let message = "Unknown error occurred";
+      if (error instanceof Error) {
+        message = error.message;
+      }
+      await notifyFailure(mint, message);
     }
   }
 

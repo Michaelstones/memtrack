@@ -14,7 +14,10 @@ export async function GET() {
 
     return NextResponse.json({ tokens: tokens ?? [] });
   } catch (error) {
-    // console.error("Failed to fetch tokens", error);
-    return new Response(JSON.stringify({ tokens: [] }), { status: 500 });
+    let message = "Unknown error occurred";
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    return new Response(JSON.stringify({ tokens: message }), { status: 500 });
   }
 }
