@@ -15,15 +15,11 @@ function Page() {
     fetch("/api/recent")
       .then((res) => res.json())
       .then((data) => {
-        // console.log(data);
         if (Array.isArray(data)) {
           setTokens(data);
-        } else {
-          // console.warn("Unexpected data format", data);
         }
       })
       .catch((err) => {
-        // console.error("Failed to fetch tokens", err);
         setError(true);
       })
       .finally(() => setLoading(false));
