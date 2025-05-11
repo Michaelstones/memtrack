@@ -70,14 +70,23 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const events = Array.isArray(body) ? body : [];
-    console.log("Received events:", events.length);
+    // console.log("Received events:", events);
 
     for (const event of events) {
+      // Verify event type
+      // if (event.type !== "TOKEN_MINT") {
+      //   console.log(`Skipping event: Type=${event.type}, expected TOKEN_MINT`);
+      //   notifyFailure("mint", `Processing error: ${"message"}`);
+      //   continue;
+      // }
       // Extract mint and program ID from Helius webhook structure
       const mint = event?.accountData?.[0]?.mint;
       const programIds = event?.transaction?.meta?.programIds || [];
+      // console.log(mint, programIds);
+
       if (!mint || !programIds.includes(PUMP_FUN_PROGRAM_ID)) {
         console.log(`Skipping event: Mint=${mint}, ProgramID not pump.fun`);
+        notifyFailure(mint, `Processing error: ${"message"}`);
         continue;
       }
 
@@ -87,6 +96,7 @@ export async function POST(req: NextRequest) {
           `https://api.dexscreener.com/latest/dex/tokens/${mint}`
         );
 
+        notifyFailure(data, "No token data found from DEXScreener");
         const tokenData = data?.pairs?.[0];
         if (!tokenData) {
           await notifyFailure(mint, "No token data found from DEXScreener");
